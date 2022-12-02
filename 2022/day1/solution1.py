@@ -16,11 +16,12 @@ def solution1():
     for i in range(0, len(elf_inventories)):
         elf_calories.append(sum(map(lambda s: int(s),elf_inventories[i])))
     top_cal = max(elf_calories)
+    print("Part 1: " + str(top_cal))
     elf_calories.remove(top_cal)
     sec_cal = max(elf_calories)
     elf_calories.remove(sec_cal)
     thr_cal = max(elf_calories)
-    print(top_cal + sec_cal + thr_cal)
+    print("Part 2: " + str(top_cal + sec_cal + thr_cal))
 
 
 if __name__ == "__main__":
