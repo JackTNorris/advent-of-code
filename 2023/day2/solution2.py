@@ -47,45 +47,34 @@ def part1():
             total_won += game   
     print(total_won)
 
-def part2():
-    dict = {'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 'six':'6', 'seven':'7', 'eight':'8', 'nine':'9', 'zero':'0'}
-    data = return_array_from_file('part-2-input.txt')[0]
-    sum = 0
-    for row in data:
-        num1 = ''
-        num2 = ''
-        indexFirstNumeric = -1
-        indexLastNumeric = -1
-        rev_row = row[::-1]
-        for i in range(0, len(row)):
-            if isNumeric(row[i]) and indexFirstNumeric < 0:
-                indexFirstNumeric = i
-                num1 = row[i]
-            if isNumeric(rev_row[i]) and indexLastNumeric < 0:
-                indexLastNumeric = len(row) - i - 1
-                num2 = rev_row[i]
 
-        for key in dict.keys():
-            try:
-                if row.index(key) < indexFirstNumeric:
-                    indexFirstNumeric = row.index(key)
-                    num1 = dict[key]
-            except ValueError:
-                pass
-            try:
-                if row.rindex(key) > indexLastNumeric:
-                    indexLastNumeric = row.rindex(key)
-                    num2 = dict[key]
-            except ValueError:
-                pass
-        try:
-            print(row + ": " + str(int(num1 + num2)))
-            sum += int(num1 + num2)
-        except ValueError:
-            pass
-    print(sum)
+def part2():
+    blue = 'blue'
+    red = 'red'
+    green = 'green'
+    data = return_array_from_file('part-1-input.txt')[0]
+    power_sum = 0
+    for row in data:
+        min_r = 0
+        min_g = 0
+        min_b = 0
+        valid = True
+        [game, hands] = row.split(':')
+        game = int(game.split(' ')[1])
+        hands = hands.split(';')
+        for hand in hands:
+            draws = list(map(lambda x: x.strip(), hand.split(',')))
+            for draw in draws:
+                if red in draw:
+                    min_r = max(int(draw.split(' ')[0]), min_r)
+                if blue in draw:
+                    min_b = max(int(draw.split(' ')[0]), min_b)
+                if green in draw:
+                    min_g = max(int(draw.split(' ')[0]), min_g)
+        power_sum += min_r * min_g * min_b
+    print(power_sum)
 
           
 
 if __name__ == "__main__":
-    part1()
+    part2()
