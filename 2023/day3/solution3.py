@@ -31,13 +31,17 @@ def numberIndexesLists(row):
 
     return number_indexes_lists;
 
-def symbolIndexes(row):
+def symbolIndexes(row, symbol = ""):
     symbol_indexes = []
     for i in range(len(row)):
         char = row[i]
         if char != '.' and not(char >= '0' and char <= '9'):
-            symbol_indexes.append(i)
+            if len(symbol) > 0 and char == symbol:
+                symbol_indexes.append(i)
+            elif len(symbol) == 0:
+                symbol_indexes.append(i)
     return symbol_indexes
+
 
 def extractNumber(number_indexes, row):
     return int(''.join(row[number_indexes[0]:(number_indexes[-1:][0] + 1)]))
@@ -58,15 +62,34 @@ def part1():
                 sum+=extractNumber(number_indexes_list, row)
     print(sum)
 
-    
-
-
-
-
 def part2():
-    print()
-
+    data = return_array_from_file('part-2-input.txt')[0]
+    sum = 0
+    for i in range(len(data)):
+        row = data[i]
+        number_indexes_lists = numberIndexesLists(row)
+        symbol_indexes = symbolIndexes(row, "*")
+        for gear_index in symbol_indexes:
+            gears = []
+            for num_indexes_list in number_indexes_lists:
+                if checkAdjacent(num_indexes_list, [gear_index]):
+                    gears.append(extractNumber(num_indexes_list, row))
+            if i!= 0:
+                temp_row = data[i-1]
+                temp_number_indexes_lists = numberIndexesLists(temp_row)
+                for num_indexes_list in temp_number_indexes_lists:
+                    if checkAdjacent(num_indexes_list, [gear_index]):
+                        gears.append(extractNumber(num_indexes_list, temp_row))
+            if i!= len(data)-1:
+                temp_row = data[i+1]
+                temp_number_indexes_lists = numberIndexesLists(temp_row)
+                for num_indexes_list in temp_number_indexes_lists:
+                    if checkAdjacent(num_indexes_list, [gear_index]):
+                        gears.append(extractNumber(num_indexes_list, temp_row))
+            if(len(gears) == 2):
+                sum+= gears[0] * gears[1]
+    print(sum)
           
 
 if __name__ == "__main__":
-    part1()
+    part2()
