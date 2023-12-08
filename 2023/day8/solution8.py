@@ -28,10 +28,30 @@ def part1():
     print(steps)
 
 def part2():
-    print('hi')
+    steps = 0
+    [instructions, nodes] = return_array_from_file('part-2-input.txt')
+    instructions = instructions[0]
+    node_map = {}
+    for node in nodes:
+        [key, values] = node.split('=')
+        key = key.strip()
+        values = list(map(lambda x: x.strip(), values.strip().strip('(').strip(')').split(',')))
+        node_map[key] = values
+    
+    def has_nodes_not_end_z(c):
+        for g in c:
+            if g[-1:] != 'Z':
+                return True
 
+    currents = list(filter(lambda x: x[-1:] == 'A', node_map.keys()))
+    while (has_nodes_not_end_z(currents)):
+        rl = instructions[steps % len(instructions)]
+        for c in range(len(currents)):
+            currents[c] = node_map[currents[c]][0 if rl == 'L' else 1]
+        steps += 1
+    print(steps)
 if __name__ == "__main__":
-    part1()
+    part2()
 
 
 
