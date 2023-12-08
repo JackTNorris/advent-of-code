@@ -11,7 +11,7 @@ def return_array_from_file(filename):
 def two_set(arr):
     return [arr[i:i+2] for i in range(0, len(arr), 2)]
 
-def seed_to_soil(seed_num, seed2soil):
+def src_to_dest(seed_num, seed2soil):
     for j in range(len(seed2soil)):
         row = seed2soil[j]
         [dest, src, length] = list(map(lambda x: int(x), row.split(' ')))
@@ -19,7 +19,7 @@ def seed_to_soil(seed_num, seed2soil):
             return seed_num - src + dest
     return seed_num
 
-def loc_to_humid(loc, humid2location):
+def dest_to_src(loc, humid2location):
     for j in range(len(humid2location)):
         row = humid2location[j]
         [dest, src, length] = list(map(lambda x: int(x), row.split(' ')))
@@ -42,7 +42,7 @@ def part1():
     location_nums = []
     seeds = list(map(lambda x: int(x), seeds.split(': ')[1].split(' ')))
     for seed_num in seeds:
-        location_nums.append(seed_to_soil(seed_to_soil(seed_to_soil(seed_to_soil(seed_to_soil(seed_to_soil(seed_to_soil(seed_num, seed2soil), soil2fert), fert2water), water2light), light2temp), temp2humid), humid2location))
+        location_nums.append(src_to_dest(src_to_dest(src_to_dest(src_to_dest(src_to_dest(src_to_dest(src_to_dest(seed_num, seed2soil), soil2fert), fert2water), water2light), light2temp), temp2humid), humid2location))
     print(min(location_nums))
 
 def part2():
@@ -60,12 +60,41 @@ def part2():
 
     for i in range(max_loc):
         print(i)
-        seed_inquiry = loc_to_humid(loc_to_humid(loc_to_humid(loc_to_humid(loc_to_humid(loc_to_humid(loc_to_humid(i, humid2location), temp2humid), light2temp), water2light), fert2water), soil2fert), seed2soil)
-        
+        seed_inquiry = dest_to_src(dest_to_src(dest_to_src(dest_to_src(dest_to_src(dest_to_src(dest_to_src(i, humid2location), temp2humid), light2temp), water2light), fert2water), soil2fert), seed2soil)
         if soil_to_seed_exists(seed_inquiry, seeds):
             print("FINAL ANSWER: ")
             print(i)
             break
+
+def soil_to_seed_exists(seed_num_inquiry, seeds):
+    seeds = two_set(seeds)
+    for i in range(len(seeds)):
+        [base, length] = seeds[i]
+        if seed_num_inquiry >= base and seed_num_inquiry <= base + length:
+            return True
+    return False
+
+def src_to_dest(seed_range, seed2soil):
+    new_ranges = []
+    for j in range(len(seed2soil)):
+        row = seed2soil[j]
+        [dest, src, length] = list(map(lambda x: int(x), row.split(' ')))
+        if seed_range[0] >= src:
+            if seed_range[1] <= src + length:
+                new_ranges += [dest + seed_range[0] - src, dest + seed_range[1] - src]
+            
+
+        if seed_num >= src and seed_num <= src + length:
+            return seed_num - src + dest
+    return seed_num
+
+def part2elegant():
+    [seeds, seed2soil, soil2fert, fert2water, water2light, light2temp, temp2humid, humid2location] = list(map(lambda x: x[0] if 'seeds:' in x[0] else x[1:], return_array_from_file('part-1-input.txt')))
+    seeds = list(map(lambda x: int(x), seeds.split(': ')[1].split(' ')))
+    seeds = two_set(seeds)
+    loc_ranges = []
+
+    return False
 
         
 

@@ -30,10 +30,14 @@ def part1():
 
 def part2():
     [times, distances] = list(map(lambda x:  int(x.split(':')[1].replace(' ', '')), return_array_from_file('part-2-input.txt')[0]))
-    #2pointer approach
-    ptr1, ptr2 = 1, times - 2
-    print(times)
-    print(distances)
+    i = 0
+    for ms in range(times):
+        temp_dist = (times - ms) * ms
+        #this is dumb, should technically be finished at equal to
+        if temp_dist > distances:
+            i = ms
+            break
+    print(times - 2*i + 1)
 
 
 
