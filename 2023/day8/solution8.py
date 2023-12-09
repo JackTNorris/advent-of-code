@@ -27,8 +27,22 @@ def part1():
 
     print(steps)
 
+def lcm(nums):
+    found = False
+    max_num = max(nums)
+    i = 2
+    while not found:
+        temp_found = True
+        for n in nums:
+            if max_num * i % n != 0:
+                temp_found = False
+                i += 1
+                break
+        found = temp_found
+    return i * max_num
+
 def part2():
-    steps = 0
+    steps = []
     [instructions, nodes] = return_array_from_file('part-2-input.txt')
     instructions = instructions[0]
     node_map = {}
@@ -44,15 +58,27 @@ def part2():
                 return True
 
     currents = list(filter(lambda x: x[-1:] == 'A', node_map.keys()))
-    while (has_nodes_not_end_z(currents)):
-        rl = instructions[steps % len(instructions)]
-        for c in range(len(currents)):
-            currents[c] = node_map[currents[c]][0 if rl == 'L' else 1]
-        steps += 1
+
+    for current in currents:
+        local_step = 0
+        while current[-1:] != 'Z':
+            rl = instructions[local_step % len(instructions)]
+            current = node_map[current][0 if rl == 'L' else 1]
+            local_step += 1
+        steps.append(local_step)
+        total = 1
+        for step in steps:
+            total *= step
     print(steps)
+    from math import gcd
+    lcm = 1
+    for i in steps:
+        lcm = lcm*i//gcd(lcm, i)
+    print(lcm)
+
 if __name__ == "__main__":
     part2()
 
 
 
-
+20685524831999
