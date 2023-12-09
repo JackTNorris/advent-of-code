@@ -19,12 +19,14 @@ def calc_diff_array(nums, diff_list):
         calc_diff_array(diffs, diff_list)
     return diff_list
 
-def calc_final_num(diff_list):
+def calc_final_num(diff_list, part_two = False):
     diff_list.reverse()
     final_nums = [0]
     for i in range(1, len(diff_list)):
-        final_nums.append(diff_list[i][-1:][0] + final_nums[i - 1])
-    print(final_nums[-1:][0])
+        if part_two:
+            final_nums.append(diff_list[i][0] - final_nums[i - 1])
+        else:
+            final_nums.append(diff_list[i][-1:][0] + final_nums[i - 1])
     return final_nums[-1:][0]
 
 
@@ -32,13 +34,15 @@ def part1():
     data = list(map(lambda x: list(map(lambda y: int(y), x.split(' '))), return_array_from_file('part-2-input.txt')[0]))
     sum = 0
     for nums in data:
-        for item in calc_diff_array(nums, [nums]):
-            print(item)
         sum+=calc_final_num(calc_diff_array(nums, [nums]))
     print(sum)
 
 def part2():
-    print('hi')
+    data = list(map(lambda x: list(map(lambda y: int(y), x.split(' '))), return_array_from_file('part-2-input.txt')[0]))
+    sum = 0
+    for nums in data:
+        sum+=calc_final_num(calc_diff_array(nums, [nums]), True)
+    print(sum)
 
 if __name__ == "__main__":
-    part1()
+    part2()
