@@ -36,6 +36,7 @@ def get_movement(ch):
 ASSUMING THAT THE MAZE CAN BE ESCAPED HERE
 pos is a tuple (row, col)
 maze is 2D array of strings that gets changed
+tried recursive, didn't work
 """
 def navigate_maze(pos, maze):
     if pos[0] < 0 or pos[0] >= len(maze) or pos[1] < 0 or pos[1] >= len(maze[0]):
@@ -84,5 +85,27 @@ def part1():
     print_maze(guard_map)
     return count_X
 
+def part2():
+    guard_map = list(map(lambda x: list(x), aoc_utils.return_array_from_file('./input.txt')[0]))
+    start_pos = (0, 0)
+    for row in range(len(guard_map)):
+        for col in range(len(guard_map[0])):
+            if guard_map[row][col] == '^':
+                start_pos = (row, col)
+    num_loop_pos = 0
+    for row in range(len(guard_map)):
+        for col in range(len(guard_map[0])):
+            if (row, col) != start_pos and guard_map[row][col] != "#":
+                guard_map = list(map(lambda x: list(x), aoc_utils.return_array_from_file('./input.txt')[0]))
+                guard_map[row][col] = "#"
+                loop_detector = set()
+                loop_detector.add((start_pos, guard_map[start_pos[0]][start_pos[1]]))
+                n_m = navigate_maze(start_pos, guard_map)
+                while n_m[0] != -1 and (n_m, guard_map[n_m[0]][n_m[1]]) not in loop_detector:
+                    loop_detector.add((n_m, guard_map[n_m[0]][n_m[1]]))
+                    n_m = navigate_maze(n_m, guard_map)
+                num_loop_pos += 1 if n_m != (-1, -1) else 0
+    return num_loop_pos
 
-print("Part 1: ", part1())
+
+print("Part 2: ", part2())
