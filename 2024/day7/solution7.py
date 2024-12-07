@@ -38,8 +38,9 @@ def calculate(cal_string: str):
     add_events = list(map(lambda x: int(x), re.split('[+]', t_string)))
     return sum(add_events)
 
+
 def calculate_dumb(cal_string: str):
-    nums = re.split("[+,*]", cal_string)
+    nums = re.split("[+,*,|]", cal_string)
     ops = list(filter(lambda x: x != '', re.split("[0-9]+", cal_string)))
     res = 0
     while len(ops) > 0:
@@ -47,12 +48,12 @@ def calculate_dumb(cal_string: str):
         n1, n2 = nums.pop(0), nums.pop(0)
         if op == '*':
             t = int(n1) * int(n2)
-            res = t
-            nums.insert(0, t)
+        elif op == '|':
+            t = int(str(n1) + str(n2))
         else:
             t = int(n1) + int(n2)
-            res = t
-            nums.insert(0, t)
+        res = t
+        nums.insert(0, t)
     return res
 
 def generate_possible_plus_mult(size, curr_str, possibilities: List):
@@ -61,6 +62,14 @@ def generate_possible_plus_mult(size, curr_str, possibilities: List):
     else:
         generate_possible_plus_mult(size, curr_str + "*", possibilities)
         generate_possible_plus_mult(size, curr_str + "+", possibilities)
+
+def generate_possible_plus_mult_union(size, curr_str, possibilities: List):
+    if len(curr_str) == size:
+        possibilities.append(curr_str)
+    else:
+        generate_possible_plus_mult_union(size, curr_str + "*", possibilities)
+        generate_possible_plus_mult_union(size, curr_str + "+", possibilities)
+        generate_possible_plus_mult_union(size, curr_str + "|", possibilities)
 
 
 def part1():
@@ -89,5 +98,30 @@ def part1():
                 break
     return res
 
+def part2():
+    data = aoc_utils.return_array_from_file('./input.txt')[0];
+    res = 0
+    for line in data:
+        broken = line.split(': ')
+        des_res = int(broken[0])
+        blank_equation = broken[1]
+        possible_plus_minus = []
+        num_spaces = len(blank_equation) - len(blank_equation.replace(" ", ""))
+        generate_possible_plus_mult_union(num_spaces, "", possible_plus_minus)
+        for symstr in possible_plus_minus:
+            nums = blank_equation.split(' ')
+            ops = list(symstr)
+            calc_string = ""
+            i = 0
+            while len(nums) > 0 or len(ops) > 0:
+                if i % 2 == 0:
+                    calc_string += (nums.pop(0))
+                else:
+                    calc_string += (ops.pop(0))
+                i += 1
+            if calculate_dumb(calc_string) == des_res:
+                res += des_res
+                break
+    return res
 
-print("Part 1: ", part1())
+print("Part 2: ", part2())
