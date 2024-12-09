@@ -69,15 +69,23 @@ def fragment2(data: List[int]):
             index -= 1
         return (index + 1, end_index)
 
+    file_set = set()
     # blocks marked with -2
     bottom, top = 0, len(data) - 1
-    for i in range(10000):
+    while top > bottom:
         while data[top] == -1:
             top-=1
         while data[bottom] != -1:
             bottom += 1
+        if bottom > top:
+            break
         gap_indices = (get_gap(bottom))
         file_indices = (get_file(top))
+        if tuple(data[file_indices[0]: file_indices[1]]) in file_set:
+            top = file_indices[0] - 2
+            continue
+        else:
+            file_set.add(tuple(data[file_indices[0]: file_indices[1]]))
         while not (gap_indices[1] - gap_indices[0] >= file_indices[1] - file_indices[0]):
             temp = gap_indices[1] + 1
             while temp < len(data) and data[temp] != -1:
@@ -119,8 +127,11 @@ def part1():
 def part2():
     data = aoc_utils.return_array_from_file('./input.txt')[0][0];
     data = generate_blocks2(data)
+    print("Generated blocks")
     data = fragment2(data)
-    print("".join(map(lambda x: str(x), filter(lambda x: x != -2, map(lambda x: '.' if x == -1 else x, data)))))
+    print("Fragmented")
+    #print("".join(map(lambda x: str(x), filter(lambda x: x != -2, map(lambda x: '.' if x == -1 else x, data)))))
+    print("Doing checksum")
     data = compute_checksum2(list(filter(lambda x: x != -2, data)))
     return data
 
