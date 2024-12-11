@@ -28,7 +28,7 @@ def blink(arr):
 def part1():
     data = aoc_utils.return_array_from_file('./input.txt')[0][0];
     stones = list(map(lambda x: int(x), data.split(' ')))
-    num_blinks = 75
+    num_blinks = 25
     for i in range(num_blinks):
         stones = blink(stones)
     return len(stones)
