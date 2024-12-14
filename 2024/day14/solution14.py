@@ -125,4 +125,4 @@ def part2():
     return iterations
 
 part2()
-print('got 7051 for this by rendering bitmaps, looking, and submitting shite answers to narrow down the fange')
+print('got 7051 for this by rendering bitmaps, looking, and submitting shite answers to narrow down the range')
