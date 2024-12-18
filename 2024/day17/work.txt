@@ -1,0 +1,40 @@
+Original:
+2,4,1,1,7,5,0,3,4,7,1,6,5,5,3,0
+
+steps:
+while A != 0:
+    B = A % 8           => B = 3 lsbs of A
+    B = B ^ 1           => do some shit to B
+    C = int(A / 2**B)   => C = A >> B
+    A = int(A / 2**3)   => A >> 3
+    B = B ^ C           => B xor C
+    B = B ^ 6           => B xor 6
+    OUTPUT B % 8        => output 3 lsbs of B
+
+so it: 
+
+- takes the 3 lsb'ss of a, plugs it into b. later xors b with A >> B, then xors with 6. then outputs lsbs of 8
+- looks like it handles A in chunks of 3 bits at a time, but will rely on upwards of 7 bits
+
+- Monkeying around a little bit, I see that the first output is only effected by % 8 of A:
+A = 12:
+output = [3], 7
+A = 20:
+output = [3], 5
+A = 28:
+output = [3], 4
+- And it seems that the second part is effected by (A / 8) % 8:
+A = 12:
+output = 3, [7]
+A = 76:
+output = 1, [7], 7
+A = 7, [7], 5
+
+- Based on on this, I know that the MSB of the octal representation of A independently affects the last element in the program
+
+- ^ while this is great, I realized that not everything is super definite
+
+
+
+
+
