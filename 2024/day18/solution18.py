@@ -37,8 +37,40 @@ def part1():
             if djikstra_map[temp[0]][temp[1]] > curr_dist + 1:
                 djikstra_map[temp[0]][temp[1]] = curr_dist + 1
                 heapq.heappush(to_visit, (curr_dist + 1, temp))
-    print(djikstra_map[70][70])
+    return (djikstra_map[70][70])
+
+def part2():
+    global directions
+    data = aoc_utils.return_array_from_file('./input.txt')[0]
+    for j in range(1025, len(data)):
+        my_map = [['.' for _ in range(71)] for _ in range(71)]
+        for i in range(j):
+            coord_x, coord_y = data[i].split(',')
+            my_map[int(coord_y)][int(coord_x)] = '#'
         
-    return None
+        djikstra_map = [[float('inf') for _ in range(71)] for _ in range(71)]
+        djikstra_map[0][0] = 0
+        to_visit = [(0, (0, 0))]
+        heapq.heapify(to_visit)
+        while len(to_visit) > 0:
+            curr_dist, curr_pos = heapq.heappop(to_visit)
+            if my_map[curr_pos[0]][curr_pos[1]] == '#':
+                continue
+            if curr_dist > djikstra_map[curr_pos[0]][curr_pos[1]]:
+                continue
+            for d in directions:
+                temp = (curr_pos[0] + d[0], curr_pos[1] + d[1])
+                if temp[0] < 0 or temp[0] > 70:
+                    continue
+                if temp[1] < 0 or temp[1] > 70:
+                    continue
+                if djikstra_map[temp[0]][temp[1]] > curr_dist + 1:
+                    djikstra_map[temp[0]][temp[1]] = curr_dist + 1
+                    heapq.heappush(to_visit, (curr_dist + 1, temp)) 
+        if (djikstra_map[70][70]) == float('inf'):
+            print(data[j - 1])
+            return data[j - 1 ]
+
 
 print("Part 1: ", part1())
+print("Part 2: ", part2())
