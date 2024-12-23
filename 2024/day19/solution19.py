@@ -37,6 +37,34 @@ def part1():
             res += 1
     return res
 
+# not 216225835082872685
+def part2():
+    cant_make = set()
+    patterns, to_make = aoc_utils.return_array_from_file('./input.txt')
+    patterns = set(patterns[0].split(', '))
+    res = 0
+    num_ways = defaultdict(lambda: 0)
+    def num_ways_to_make(des: str) -> bool:
+        ways = 0
+        if des in cant_make:
+            return 0
+        if des in num_ways:
+            return num_ways[des]
+        for p in patterns:
+            if des == p:
+                ways += 1
+            elif des.startswith(p):
+                temp = num_ways_to_make(des[len(p):])
+                ways += temp
+        if ways == 0:
+            cant_make.add(des)
+        num_ways[des] = ways
+        return ways
 
+    for t in to_make:
+        g = num_ways_to_make(t)
+        res += g
+        print(t + ": ", g)
+    return res
 
-print(part1())
+print(part2())
