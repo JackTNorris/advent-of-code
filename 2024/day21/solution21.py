@@ -11,6 +11,11 @@ from copy import copy, deepcopy
 n, s, e, w = (-1, 0), (1, 0), (0,- 1), (0, 1)
 directions = [n, s, e, w]
 
+numeric_bfs_sols = {}
+dir_bfs_sols = {}
+numeric_keypad = [['7', '8', '9'], ['4', '5', '6'], ['1', '2', '3'], [None, '0', 'A']]
+directional_keypad = [[None, '^', 'A'], ['<', 'v', '>']]
+
 def dir_to_keypad(dir):
     if dir == (-1, 0):
         return '^'
@@ -89,6 +94,7 @@ def direction_coord_from_Key(key):
     elif key == None:
         return (0, 0)
     else:
+        print(key)
         raise Exception("Invalid robot keypad")
 
 
@@ -136,10 +142,21 @@ def recursive_bfs_all_paths(grid, queue, dest, path, all_paths, dir_path, dir_al
     return recursive_bfs_all_paths(grid, queue, dest, path, all_paths, dir_path, dir_all_paths)
 
 def find_all_routes(grid, src, dest):
+    if grid == numeric_keypad:
+        if (src, dest) in numeric_bfs_sols:
+            return numeric_bfs_sols[(src, dest)]
+    elif grid == directional_keypad:
+        if (src, dest) in numeric_bfs_sols:
+            return dir_bfs_sols[(src, dest)]
     queue = [([src], [])]  # Initialize the queue with the start node as a path
     all_paths = []
     dir_all_paths = []
-    return sorted(recursive_bfs_all_paths(grid, queue, dest, [], all_paths, [], dir_all_paths), key=lambda x: len(x))
+    temp = sorted(recursive_bfs_all_paths(grid, queue, dest, [], all_paths, [], dir_all_paths), key=lambda x: len(x))
+    if grid == numeric_keypad:
+        numeric_bfs_sols[(src, dest)] = temp
+    elif grid == directional_keypad:
+        dir_bfs_sols[(src, dest)] = temp
+    return temp
 
 def part1():
     data = aoc_utils.return_array_from_file('input.txt')[0]
@@ -150,8 +167,6 @@ def part1():
     directional_keypad = [[None, '^', 'A'], ['<', 'v', '>']]
     num_robots = 2
 
-    numeric_bfs_sols = {}
-    dir_bfs_sols = {}
     res = 0
 
     # numeric_possibilities
@@ -161,21 +176,13 @@ def part1():
         # for every character in the code
         for i in range(len(code)):
             if i == 0:
-                if ((3, 2), numeric_coord_from_key(code[i])) in numeric_bfs_sols:
-                    pos_directions = numeric_bfs_sols[((3, 2), numeric_coord_from_key(code[i]))]
-                else:
-                    _, pos_directions = find_all_routes(numeric_keypad, (3, 2), numeric_coord_from_key(code[i]))
-                    numeric_bfs_sols[((3, 2), numeric_coord_from_key(code[i]))] = deepcopy(pos_directions)
+                _, pos_directions = find_all_routes(numeric_keypad, (3, 2), numeric_coord_from_key(code[i]))
                 min_poss_length =len(min(pos_directions, key=len))
                 pos_directions = list(filter(lambda x: len(x) == min_poss_length, pos_directions))
                 for d in pos_directions:
                     possibilities.append("".join(d) + 'A')
             else:
-                if (numeric_coord_from_key(prev), numeric_coord_from_key(code[i])) in numeric_bfs_sols:
-                    pos_directions = numeric_bfs_sols[(numeric_coord_from_key(prev), numeric_coord_from_key(code[i]))]
-                else:
-                    _, pos_directions = find_all_routes(numeric_keypad, numeric_coord_from_key(prev), numeric_coord_from_key(code[i]))
-                    numeric_bfs_sols[(numeric_coord_from_key(prev), numeric_coord_from_key(code[i]))] = deepcopy(pos_directions)
+                _, pos_directions = find_all_routes(numeric_keypad, numeric_coord_from_key(prev), numeric_coord_from_key(code[i]))
                 temp_len = len(possibilities)
                 min_poss_length =len(min(pos_directions, key=len))
                 pos_directions = list(filter(lambda x: len(x) == min_poss_length, pos_directions))
@@ -234,5 +241,46 @@ def part1():
         print(len(possibilities[0]))
 
     return res
+
+# had to change approach, was running way too slow
+# got it after reading, a little confused why locally optimum works though
+def part2():
+    data = aoc_utils.return_array_from_file('input.txt')[0]
+    num_robots = 25
+
+    res = 0
+
+    def get_num_presses(keypad, code, robot, memo):
+        key = (code, robot)
+        if key in memo:
+            return memo[key]
+        current = 'A'
+        length = 0
+        for char in code:
+            # Find the smallest move for each transition
+            if keypad == numeric_keypad:
+                _, moves = find_all_routes(keypad, numeric_coord_from_key(current), numeric_coord_from_key(char))
+                moves = list(map(lambda x: "".join(x) + 'A', moves))
+            elif keypad == directional_keypad:
+                _, moves = find_all_routes(keypad, direction_coord_from_Key(current), direction_coord_from_Key(char))
+                moves = list(map(lambda x: "".join(x) + 'A', moves))
+            if robot == 0:
+                length += len(moves[0])
+            else:
+                length += min(get_num_presses(directional_keypad, move, robot - 1, memo) for move in moves)
+            current = char
+        memo[key] = length
+        return length
+
+    memo = {}
+    res = 0
+    # numeric_possibilities
+    for code in data:
+        # for every character in the code
+        res += int(code[:3]) * get_num_presses(numeric_keypad, code, num_robots, memo)
+    return res
+
 print("Part 1: ", part1())
+print("Part 2: ", part2())
+
     
