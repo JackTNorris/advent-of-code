@@ -55,5 +55,46 @@ def part1():
             res += 1
     return res
 
+def bron_kerbosch(R, P, X, graph):
+    if not P and not X:
+        yield R
+    while P:
+        v = P.pop()
+        yield from bron_kerbosch(
+            R.union({v}),
+            P.intersection(graph[v]),
+            X.intersection(graph[v]),
+            graph
+        )
+        X.add(v)
 
-print("Part1: ", part1())
+
+def part2():
+    data = aoc_utils.return_array_from_file('input.txt')[0]
+    edges = []
+    curr_max_size = 0
+    # construct graph
+    for pair in data:
+        p1, p2 = pair.split('-')
+        edges.append((p1, p2))
+
+    graph = {i[0]: set() for i in edges}
+    for u, v in edges:
+        graph[u].add(v)
+        graph[v].add(u)
+
+    graph = {key: set(graph[key]) for key in graph}
+    all_cliques = list(bron_kerbosch(set(), set(graph.keys()), set(), graph))
+    if all_cliques:
+        max_clique_size = max(len(clique) for clique in all_cliques)
+    else:
+        max_clique_size = -1
+    temp = list(list(filter(lambda x: len(x) == max_clique_size, all_cliques))[0])
+    temp.sort()
+    print(",".join(temp))
+    
+
+    
+        
+
+print("Part1: ", part2())
