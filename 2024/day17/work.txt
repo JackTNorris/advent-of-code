@@ -30,9 +30,12 @@ A = 76:
 output = 1, [7], 7
 A = 7, [7], 5
 
-- Based on on this, I know that the MSB of the octal representation of A independently affects the last element in the program
-
-- ^ while this is great, I realized that not everything is super definite
+- Based on on this, I know that the MSB of the octal representation of A independently affects the last element in the program. Leveraging this, I was able to narrow down A, MSB by MSB
+- If every bit starts at 0, there are some cases where there are "multiple solutions" at a given point for a given output (Ex: 12340000 and 12350000 might both output the same sequence)
+- ^^ based on this, my strategy was simply as follows:
+    => Initialize "solution" to 0000000000000000 (16 octet number)
+    => From 0 - 7, increment the MSB of this and plug it into the program. Anytime the final number output is what you want, take note of the octet value
+    => For every octet value that "works", continue this process for the next MSB (ex: if 1000000000000000 and 200000000000000 work, your next tries would be 1100000000000000 and 2100000000000000)
 
 
 
