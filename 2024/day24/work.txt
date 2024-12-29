@@ -1,4 +1,5 @@
-Using this diagram as a full adder to reference for each of these "rules": diagram here: https://media.geeksforgeeks.org/wp-content/uploads/3-57.png
+After a bit of digging (add consulting the reddit a bit, still a CE novice here), I realized the intended design of the "connection" should be a full adder
+From there, I used this diagram to check the following "rules" for connections: https://media.geeksforgeeks.org/wp-content/uploads/3-57.png
 
 - Start with expressions with a z_output in it.
   => every z expression should involve an XOR, unless it's the last z-bit
@@ -39,8 +40,11 @@ CURR LIST: z15, z37, z20, nfj, ncd
   => msn is XOR'd and AND'd as expected (with the same carry bit). therefore, the fishiness might lie in fkg or cqr
   => fkg is correctly fed as a carry bit to the next op, so clearly cqr is the errant bit
 
-CURR LIST: z15, z37, z20, nfj, ncd, qnw, vkg, cqr
+CURR LIST: "z15", "z37", "z20", "nfj", "ncd", "qnw", "vkg", "cqr"
 
 ^^ at this point, we have all 8. This isn't super generalized, but someone could use a similar approach to "walk" the rules of the full-adder to find out what's up
 
+FINAL ANSWER:
+
+cqr,ncd,nfj,qnw,vkg,z15,z20,z37
 
