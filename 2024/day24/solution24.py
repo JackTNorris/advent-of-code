@@ -105,17 +105,16 @@ def part2():
         if len(temp) > 1:
             print("Something is possibly wrong with: ", first_and_output)
         
-        
-        # test that the XOR output of XY is somehow XOR'd into Zi (one time)
-        temp = list(filter(lambda x: x.find('XOR') >= 0 and x.find("z{:02d}".format(i)) >= 0, conn_dict[first_xor_output]))
-        if len(temp) != 1:
-            print("Something is possibly wrong with: ", first_xor_output)
-        """
         # test that the XOR output of XY is AND'd with something (only once):
         temp = list(filter(lambda x: x.find('AND') >= 0, conn_dict[first_xor_output]))
         if len(temp) != 1:
             print("Something is possibly wrong with: ", first_xor_output)
-        """
+        
+        # test that the XOR output of XY is XOR'd with something (only once) to get Z:
+        temp = list(filter(lambda x: x.find('XOR') >= 0 and x.find('z') >= 0, conn_dict[first_xor_output]))
+        if len(temp) != 1:
+            print("Something is possibly wrong with: ", first_xor_output)
+        
         
 
         

@@ -1,13 +1,46 @@
-'nfj',
+Using this diagram as a full adder to reference for each of these "rules": diagram here: https://media.geeksforgeeks.org/wp-content/uploads/3-57.png
 
-'qnw?'
+- Start with expressions with a z_output in it.
+  => every z expression should involve an XOR, unless it's the last z-bit
+  => with this, we see "problems" with z15, z45, z37, and z20. z45 is the last bit, so I think we've found at least 3
 
-'ncd' => good,
-'cqr' => definitely some shit
-'vkg'**, => dfinitely
+CURR LIST: z15, z37, z20
 
-'z20',
-'z37',
-'z15',
+- Test that the AND output of XY is OR'd and only used once:
+  => doing this, we get qkm and nfj
+  => qkm is an exception, since it involves the first bits of x and y. it's used more than once since it's directly fed in as a "carry" to the next operation
+  => nfj, on the other hand, isn't the last bits or first couple bits. It's got something wrong with it
 
-cqr,ncd,nfj,qnw,vkg,z15,z20,z37
+CURR LIST: z15, z37, z20, nfj
+
+- Test that the XOR output of XY is AND'd with something, and only once
+  => doing this, we get z00 and ncd
+  => z00 is an exception. it never needs to be "AND"'d with something since there's no carry
+  => ncd, on the other hand, isn't involved with the last bits or first couple bits of input. It's got something wrong with it
+
+CURR LIST: z15, z37, z20, nfj, ncd
+
+- Test that the XOR output of XY is XOR'd with something (only once) to get Z:
+  => doing this, we get dnt, rjm, and msn
+  => investigating a bit, I can see that rjm is correctly XOR'd and AND'd with something as expected:
+     => x15 XOR y15 -> rjm
+     => rjm AND ctg -> dnn
+     => ctg XOR rjm -> qnw
+  => based on this, I think the true fishiness is with qnw; it seems to be swapped with a z output. dnn has the expected behavior
+  => dnt has a similar story to rjm:
+     => y37 XOR x37 -> dnt
+     => fcm XOR dnt -> vkg
+     => dnt AND fcm -> z37
+  => dnt is XOR'd and AND'd as expected (meaning it's "locked" in place somewhat), so the true fishiness lies in z37 and vkg. 
+  => msn has a similar story:
+     => x20 XOR y20 -> msn
+     => wrb AND msn -> fkg
+     => wrb XOR msn -> cqr
+  => msn is XOR'd and AND'd as expected (with the same carry bit). therefore, the fishiness might lie in fkg or cqr
+  => fkg is correctly fed as a carry bit to the next op, so clearly cqr is the errant bit
+
+CURR LIST: z15, z37, z20, nfj, ncd, qnw, vkg, cqr
+
+^^ at this point, we have all 8. This isn't super generalized, but someone could use a similar approach to "walk" the rules of the full-adder to find out what's up
+
+
