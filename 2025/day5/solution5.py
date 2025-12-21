@@ -6,7 +6,6 @@ import aoc_utils
 from typing import List
 from collections import defaultdict
 
-# hacky as crap, but oiko
 def part1(ranges, ids):
     res = 0
     for id in ids:
@@ -20,13 +19,28 @@ def part1(ranges, ids):
                 break
     return res
     
-    
 
 # looking to make the biggest 12 digit number from the input
 def part2(ranges, ids):
+    # too low: 333404221810494
+    #.         360341832208407
     res = 0
-
+    sorted_ranges = list(map(lambda x: tuple(x.split('-')), sorted(ranges, key=lambda x: int(x.split('-')[0]))))
+    print(sorted_ranges)
+    prev = (-1, -1)
+    for r in sorted_ranges:
+        if prev == (-1, -1):
+            res += max(0, int(r[1]) - int(r[0]) + 1)
+            prev = (int(r[0]), int(r[1]))
+        else:
+            if prev[1] < int(r[0]):
+                res += max(0, int(r[1]) - int(r[0]) + 1)
+                prev = (min(prev[0],  int(r[0])), max(int(r[1]), prev[1]))
+            else:
+                res += max(0, int(r[1]) - prev[1])
+                prev = (min(prev[0],  int(r[0])), max(int(r[1]), prev[1]))
     return res
+
 if __name__ == "__main__":
     data = aoc_utils.return_array_from_file('input.txt')
 
