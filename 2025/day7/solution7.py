@@ -43,9 +43,26 @@ def part2(data: List[str]):
                 data[i][j] = '|'
             elif above_row[j] == '|':
                 data[i][j] = '|'
-    for row in data:
-        print(row)
+    res = 0
+    from functools import lru_cache
+    @lru_cache
+    def dfs(i, j):
+        nonlocal res
+        if i == num_rows - 1:
+            return 1
+        elif data[i][j] == '.':
+            return 0
+        elif data[i][j] == '|':
+            return dfs(i +1, j)
+        elif data[i][j] == '^':
+            return dfs(i + 1, j + 1) + dfs(i + 1, j - 1)
+    for j in range(len(data[0])):
+        if data[0][j] == 'S':
+            res = dfs(1, j)
+    return res
+        
+
 if __name__ == "__main__":
     data = aoc_utils.return_array_from_file('input.txt')
-    #print("Part 1: ", part1(data[0]))
-    part2(data[0])
+    print("Part 1: ", part1(data[0]))
+    print("Part 2: ", part2(data[0]))
