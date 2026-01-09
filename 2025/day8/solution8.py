@@ -9,7 +9,6 @@ import math
 
 # no such thing as ^^, ^ aren't on edges either
 def part1(data):
-    res = 0
     distances = []
     # constructing our edged graph
     for i in range(len(data)):
@@ -51,12 +50,48 @@ def part1(data):
     
 
 def part2(data: List[str]):
-    num_rows, num_cols = len(data), len(data[0])
-    res = 0
-    return res
-        
+    # doing kruskals
+    distances = []
+    # conn graph? (Node)
+    graph = {}
+    # constructing our edged graph
+    for i in range(len(data)):
+        (x1, y1, z1) = map(int, data[i].split(','))
+        graph[data[i]] = [data[i], data[i]]
+        for j in range(i + 1, len(data)):
+            (x2, y2, z2) = map(int, data[j].split(','))
+            dist = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+            distances.append((data[i], data[j], dist))
+
+    distances = sorted(distances, key=lambda x: x[2])
+
+
+    def parent(node):
+        temp = graph[node]
+        return temp[1]
+
+    def find(node):
+        if graph[node][1] != node:
+            graph[node][1] = find(graph[node][1])
+        return graph[node][1]
+
+    def union(n1, n2):
+        root1 = find(n1)
+        root2 = find(n2)
+        graph[root1][1] = root2
+
+    last_connected = None
+    for d in distances:
+        p1, p2, dist = d
+        if find(p1) != find(p2):
+            union(p1, p2)
+            last_connected = d
+        else:
+            continue
+    return int(last_connected[0].split(',')[0]) * int(last_connected[1].split(',')[0])
+    
 
 if __name__ == "__main__":
     data = aoc_utils.return_array_from_file('input.txt')
-    print("Part 1: ", part1(data[0]))
+    print("Part 2: ", part2(data[0]))
     # print("Part 2: ", part2(data[0]))
